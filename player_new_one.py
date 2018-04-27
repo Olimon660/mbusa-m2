@@ -199,7 +199,7 @@ class Player:
 
     def linear2(self):
         ret_d = dict()
-        ret_d[self.v_col] = 1023.0
+        # ret_d[self.v_col] = 1023.0
         self.counter_enemy_mix(ret_d)
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
@@ -207,7 +207,7 @@ class Player:
 
     def quad2(self):
         ret_d = dict()
-        ret_d[self.v_col] = 1023.0
+        # ret_d[self.v_col] = 1023.0
         self.counter_enemy_mix(ret_d)
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
@@ -297,16 +297,17 @@ class Player:
                     self.enemy_col_cond['ZeroM'] = col
                     continue
 
-        for col in self.data:
-            if col != self.v_col:
-                if self.is_first_to_move:
-                    arr = np.array(self.data[col][2::2])
-                else:
-                    arr = np.array(self.data[col][1::2])
-                if (arr > 0).all():
-                    self.enemy_col_cond['SumPos'] = col
-                if (arr < 0).all():
-                    self.enemy_col_cond['SumNeg'] = col
+        if self.turn_num == 3:
+            for col in self.data:
+                if col != self.v_col:
+                    if self.is_first_to_move:
+                        arr = np.array(self.data[col][2::2])
+                    else:
+                        arr = np.array(self.data[col][1::2])
+                    if (arr == 1023.0).all():
+                        self.enemy_col_cond['SumPos'] = col
+                    if (arr == -1023.0).all():
+                        self.enemy_col_cond['SumNeg'] = col
 
     def counter_enemy_mix(self, ret_d):
         count = 0
@@ -361,6 +362,13 @@ class Player:
                             ret_d[k] = -self.BOUNDARY
                         else:
                             ret_d[k] = self.BOUNDARY
+                        if self.turn_num > 2:
+                            if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
+                                ret_d[k] = -self.BOUNDARY
+                            elif 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
+                                ret_d[k] = self.BOUNDARY
+                            else:
+                                ret_d[k] = np.random.uniform(-1000.0, 1000.0)
 
                     # following two lines may need tweak
 
@@ -370,10 +378,6 @@ class Player:
                     #     ret_d[k] = -self.BOUNDARY
 
                 count += 1
-
-        # for k in self.data.keys():
-        #     if k not in ret_d:
-        #         ret_d[k] = self.BOUNDARY
 
         for k in ret_d:
             ret_d[k] = round(float(ret_d[k]), 5)
