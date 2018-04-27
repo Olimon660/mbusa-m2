@@ -113,6 +113,8 @@ class Player:
             count = 0
             for k in self.played_data:
                 if k != self.v_col and self.played_data[k][-1] > 0:
+                    # if 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
+                    #     continue
                     ret_d[k] = next_max
                     count += 1
                 if count > 1:
@@ -130,7 +132,7 @@ class Player:
         :return:
         """
         ret_d = dict()
-        ret_d[self.v_col] = round(1023.0 - (self.turn_num-1) * self.EPSILON, 5)
+        ret_d[self.v_col] = round(-1023.0 + (self.turn_num-1) * self.EPSILON, 5)
 
         if self.turn_num == 10:
             ret_d[self.v_col] = self.next_after(self.get_next_unique_min(), 1)
@@ -140,6 +142,8 @@ class Player:
             count = 0
             for k in self.played_data:
                 if k != self.v_col and self.played_data[k][-1] < 0:
+                    if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
+                        continue
                     ret_d[k] = next_min
                     count += 1
                 if count > 1:
