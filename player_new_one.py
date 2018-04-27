@@ -113,8 +113,8 @@ class Player:
             count = 0
             for k in self.played_data:
                 if k != self.v_col and self.played_data[k][-1] > 0:
-                    # if 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
-                    #     continue
+                    if 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
+                        continue
                     ret_d[k] = next_max
                     count += 1
                 if count > 1:
