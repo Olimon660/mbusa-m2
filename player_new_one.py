@@ -139,7 +139,7 @@ class Player:
             next_min = self.get_next_unique_min()
             count = 0
             for k in self.played_data:
-                if k != self.v_col and self.played_data[k][-1] > 0:
+                if k != self.v_col and self.played_data[k][-1] < 0:
                     ret_d[k] = next_min
                     count += 1
                 if count > 1:
