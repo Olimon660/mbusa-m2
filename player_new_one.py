@@ -98,8 +98,21 @@ class Player:
         ret_d = dict()
         ret_d[self.v_col] = round(1023.0 - (self.turn_num-1) * self.EPSILON, 5)
 
-        if self.turn_num == 10 and 'Max' in self.enemy_col_cond:
-            ret_d[self.v_col] = self.next_after(self.get_current_unique_max(), -1)
+        if self.turn_num == 10:
+            ret_d[self.v_col] = self.next_after(self.get_next_unique_max(), -1)
+
+            # assign the next max to two other columns
+            next_max = self.get_next_unique_max()
+            count = 0
+            for k in self.played_data:
+                if k != self.v_col and self.played_data[k][-1] > 0:
+                    ret_d[k] = next_max
+                    count += 1
+                if count > 1:
+                    break
+
+        # if self.turn_num == 10 and 'Max' in self.enemy_col_cond:
+        #     ret_d[self.v_col] = self.next_after(self.get_current_unique_max(), -1)
 
         self.counter_enemy_mix(ret_d)
 
@@ -113,12 +126,25 @@ class Player:
         :return:
         """
         ret_d = dict()
+        ret_d[self.v_col] = round(1023.0 - (self.turn_num-1) * self.EPSILON, 5)
 
-        ret_d[self.v_col] = round(-1023.0 + (self.turn_num - 1) * self.EPSILON, 5)
+        if self.turn_num == 10:
+            ret_d[self.v_col] = self.next_after(self.get_next_unique_min(), 1)
+
+            # assign the next min to two other columns
+            next_min = self.get_next_unique_min()
+            count = 0
+            for k in self.played_data:
+                if k != self.v_col and self.played_data[k][-1] > 0:
+                    ret_d[k] = next_min
+                    count += 1
+                if count > 1:
+                    break
+
+        # if self.turn_num == 10 and 'Min' in self.enemy_col_cond:
+        #     ret_d[self.v_col] = self.next_after(self.get_current_unique_min(), -1)
+
         self.counter_enemy_mix(ret_d)
-
-        if self.turn_num == 10 and 'Min' in self.enemy_col_cond:
-            ret_d[self.v_col] = self.next_after(self.get_current_unique_max(), -1)
 
         for k in ret_d:
             self.played_data[k].append(ret_d[k])

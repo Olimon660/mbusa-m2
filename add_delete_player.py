@@ -15,7 +15,7 @@ send_to_server(json.dumps({"cmd": "ADD", "syn": 12, "name": "Evil Again?", "data
 
 send_to_server(json.dumps({"cmd": "ADD", "syn": 12, "name": "10000 Bugs", "data": p5}))
 
-send_to_server(json.dumps({"cmd": "ADD", "syn": 12, "name": "Sleep No More NLQM", "data": p1}))
+send_to_server(json.dumps({"cmd": "ADD", "syn": 12, "name": "Sleep No More N10M", "data": p1}))
 
 
 
