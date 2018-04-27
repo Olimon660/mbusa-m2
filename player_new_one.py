@@ -352,6 +352,13 @@ class Player:
                             ret_d[k] = -self.BOUNDARY
                         else:
                             ret_d[k] = self.BOUNDARY
+                        if self.turn_num > 2:
+                            if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
+                                ret_d[k] = -self.BOUNDARY
+                            elif 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
+                                ret_d[k] = self.BOUNDARY
+                            else:
+                                ret_d[k] = np.random.uniform(-1000.0, 1000.0)
 
                 count += 1
 
