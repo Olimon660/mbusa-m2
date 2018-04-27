@@ -252,8 +252,6 @@ class Player:
         """
         :return:
         """
-        if self.turn_num <= 3:
-            return
 
         if self.turn_num == 9:
             sorted_max = sorted(self.unique_max_col_count.items(), key=lambda x: x[1], reverse=True)
