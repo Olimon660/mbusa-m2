@@ -435,6 +435,9 @@ class Player:
         return m
 
     def next_after(self, num, direction):
+		"""
+		This  fucntion returns the next floating number towards direction dir
+		"""
         return round(num + direction * self.EPSILON, 5)
 
     def __repr__(self):
