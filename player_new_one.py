@@ -85,6 +85,10 @@ class Player:
         return {k: 1.0 for k in data}
 
     def check_is_first(self):
+        """
+        This function returns True if the player's value is entered before or 
+        the opponent in the matrix, False otherwise.
+        """
         for col in self.data.keys():
             if self.data[col][1::2] != self.played_data[col]:
                 return False
@@ -359,6 +363,9 @@ class Player:
         return ret_d
 
     def get_current_unique_max(self):
+        """
+        This function returns the unique maximum value in the current game matrix.
+        """
         nums_count = dd(int)
         for col in self.data.keys():
             for number in self.data[col]:
@@ -373,6 +380,9 @@ class Player:
         return current_max
 
     def get_current_unique_min(self):
+        """
+        This function returns the unique minimum value in the current game matrix.
+        """
         nums_count = dd(int)
         for col in self.data.keys():
             for number in self.data[col]:
@@ -387,6 +397,10 @@ class Player:
         return current_min
 
     def get_next_unique_max(self):
+        """
+        This function returns the maximum value possible that hasn't been 
+        put into the game matrix.
+        """
         m = self.BOUNDARY
         while m >= -self.BOUNDARY:
             for col in self.data:
@@ -398,6 +412,10 @@ class Player:
         return m
 
     def get_next_unique_min(self):
+        """
+        This function returns the minimum value possible that hasn't been 
+        put into the game matrix.
+        """
         m = -self.BOUNDARY
         while m <= self.BOUNDARY:
             for col in self.data:
