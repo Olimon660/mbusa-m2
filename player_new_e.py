@@ -6,6 +6,8 @@ from scipy import stats
 
 class Player:
     """
+    This is the evil version where we have a bigger boundary
+
     The player class of syndicate 12 - The Last Jedi
     Group members include: Ernest, Iris, Junyi, Simon, Yan
     This players tries to achieve the victory condition as well as defeat others.

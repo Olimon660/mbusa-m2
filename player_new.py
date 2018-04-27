@@ -6,6 +6,9 @@ from scipy import stats
 
 class Player:
     """
+    This is the 10000 bugs.
+    For Max it hides from beginning then hits in the last turn
+
     The player class of syndicate 12 - The Last Jedi
     Group members include: Ernest, Iris, Junyi, Simon, Yan
     This players tries to achieve the victory condition as well as defeat others.
