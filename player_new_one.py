@@ -111,9 +111,6 @@ class Player:
                 if count > 1:
                     break
 
-        # if self.turn_num == 10 and 'Max' in self.enemy_col_cond:
-        #     ret_d[self.v_col] = self.next_after(self.get_current_unique_max(), -1)
-
         self.counter_enemy_mix(ret_d)
 
         for k in ret_d:
@@ -140,9 +137,6 @@ class Player:
                     count += 1
                 if count > 1:
                     break
-
-        # if self.turn_num == 10 and 'Min' in self.enemy_col_cond:
-        #     ret_d[self.v_col] = self.next_after(self.get_current_unique_min(), -1)
 
         self.counter_enemy_mix(ret_d)
 
@@ -185,8 +179,6 @@ class Player:
         ret_d = dict()
         if self.turn_num <= 1:
             ret_d[self.v_col] = 0.0
-        # elif self.turn_num == 10:
-        #     ret_d[self.v_col] = self.BOUNDARY
         else:
             slope, intercept, r_value, p_value, std_err = \
                 linregress(range((self.turn_num-1)*2+1), self.data[self.v_col])
@@ -199,7 +191,6 @@ class Player:
 
     def linear2(self):
         ret_d = dict()
-        # ret_d[self.v_col] = 1023.0
         self.counter_enemy_mix(ret_d)
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
@@ -207,7 +198,6 @@ class Player:
 
     def quad2(self):
         ret_d = dict()
-        # ret_d[self.v_col] = 1023.0
         self.counter_enemy_mix(ret_d)
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
@@ -217,8 +207,6 @@ class Player:
         ret_d = dict()
         if self.turn_num <= 1:
             ret_d[self.v_col] = 0.0
-        # elif self.turn_num == 10:
-        #     ret_d[self.v_col] = self.BOUNDARY
         else:
             x = np.array(range((self.turn_num-1)*2+1))
             slope, intercept, r_value, p_value, std_err = \
@@ -362,20 +350,6 @@ class Player:
                             ret_d[k] = -self.BOUNDARY
                         else:
                             ret_d[k] = self.BOUNDARY
-                        if self.turn_num > 2:
-                            if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
-                                ret_d[k] = -self.BOUNDARY
-                            elif 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
-                                ret_d[k] = self.BOUNDARY
-                            else:
-                                ret_d[k] = np.random.uniform(-1000.0, 1000.0)
-
-                    # following two lines may need tweak
-
-                    # if 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
-                    #     ret_d[k] = self.BOUNDARY
-                    # if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
-                    #     ret_d[k] = -self.BOUNDARY
 
                 count += 1
 
@@ -435,9 +409,9 @@ class Player:
         return m
 
     def next_after(self, num, direction):
-		"""
-		This  fucntion returns the next floating number towards direction dir
-		"""
+        """
+        This  fucntion returns the next floating number towards direction dir
+        """
         return round(num + direction * self.EPSILON, 5)
 
     def __repr__(self):
