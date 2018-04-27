@@ -161,6 +161,7 @@ class Player:
         if self.turn_num == 10:
             # take a guess
 
+            
             if self.is_first_to_move:
                 e_col = self.data[self.v_col][2::2]
             else:
