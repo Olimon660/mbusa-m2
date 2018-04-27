@@ -86,8 +86,8 @@ class Player:
 
     def check_is_first(self):
         """
-        This function checks if a player's row is put above its opponent in the game matrix. 
-        Returns True if its value is put first in the matrix. False otherwise.
+        This function returns True if the player's value is entered before or 
+        the opponent in the matrix, False otherwise.
         """
         for col in self.data.keys():
             if self.data[col][1::2] != self.played_data[col]:
