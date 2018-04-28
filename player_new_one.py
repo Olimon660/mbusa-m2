@@ -166,8 +166,8 @@ class Player:
         else:
             ret_d[self.v_col] = min(max(-current_sum - self.EPSILON, -self.BOUNDARY), self.BOUNDARY)
         if self.turn_num == 10:
-            # take a guess
-
+            
+            # Extract opponent's data and predict they'll put the mode value this round
             if self.is_first_to_move:
                 e_col = self.data[self.v_col][2::2]
             else:
