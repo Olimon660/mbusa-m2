@@ -158,13 +158,13 @@ class Player:
     def zero_m_strategy(self):
         # choose two other disguise col if not set
         ret_d = dict()
-        current_sum = np.sum(self.data[self.v_col])
+        current_sum = sum(self.data[self.v_col])
         if current_sum <= abs(0.000001 * len(self.data[self.v_col])):
             ret_d[self.v_col] = 0.0000001
         elif current_sum < 0:
-            ret_d[self.v_col] = current_sum + self.EPSILON  # or random(0,1023)?
+            ret_d[self.v_col] = min(max(current_sum + self.EPSILON, -self.BOUNDARY), self.BOUNDARY)  # or random(0,1023)?
         else:
-            ret_d[self.v_col] = -current_sum - self.EPSILON
+            ret_d[self.v_col] = min(max(-current_sum - self.EPSILON, -self.BOUNDARY), self.BOUNDARY)
         if self.turn_num == 10:
             # take a guess
 
@@ -232,7 +232,7 @@ class Player:
 
     def sum_pos_strategy(self):
         ret_d = dict()
-        if np.sum(self.data[self.v_col]) > 0:
+        if sum(self.data[self.v_col]) > 0:
             ret_d[self.v_col] = self.BOUNDARY
         elif self.turn_num <= 3:
             ret_d[self.v_col] = self.BOUNDARY - (self.turn_num - 1) * self.EPSILON
@@ -245,11 +245,12 @@ class Player:
 
     def sum_neg_strategy(self):
         ret_d = dict()
-        if np.sum(self.data[self.v_col]) < 0:
+        if sum(self.data[self.v_col]) < 0:
             ret_d[self.v_col] = -self.BOUNDARY
         elif self.turn_num <= 3:
             ret_d[self.v_col] = -self.BOUNDARY + (self.turn_num - 1) * self.EPSILON
-        ret_d[self.v_col] = -self.BOUNDARY
+        else:
+            ret_d[self.v_col] = -self.BOUNDARY
         self.counter_enemy_mix(ret_d)
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
@@ -263,9 +264,9 @@ class Player:
         if self.turn_num == 9:
             sorted_max = sorted(self.unique_max_col_count.items(), key=lambda x: x[1], reverse=True)
             sorted_min = sorted(self.unique_min_col_count.items(), key=lambda x: x[1], reverse=True)
-            if sorted_max and sorted_max[0][1] >= 4:
+            if sorted_max and sorted_max[0][1] >= 2:
                 self.enemy_col_cond['Max'] = sorted_max[0][0]
-            if sorted_min and sorted_min[0][1] >= 4:
+            if sorted_min and sorted_min[0][1] >= 2:
                 self.enemy_col_cond['Min'] = sorted_min[0][0]
 
         if self.turn_num == 4:
@@ -323,8 +324,7 @@ class Player:
                     if k not in ret_d:
                         ret_d[k] = next_max
                         next_max = self.get_next_unique_max()
-
-            if 'Min' in self.enemy_col_cond:
+            elif 'Min' in self.enemy_col_cond:
                 if current_min < 0:
                     ret_d[self.enemy_col_cond['Min']] = current_min
                 else:
@@ -334,10 +334,17 @@ class Player:
                     if k not in ret_d:
                         ret_d[k] = next_min
                         next_min = self.get_next_unique_min()
+            else:
+                for k in self.data:
+                    if k not in ret_d:
+                        if self.played_data[k][-1] > 0:
+                            ret_d[k] = self.get_next_unique_max()
+                        else:
+                            ret_d[k] = self.get_next_unique_min()
 
         for k in self.data.keys():
             if k not in ret_d:
-                current_sum = np.sum(self.data[k])
+                current_sum = sum(self.data[k])
 
                 if self.turn_num == 1 or current_sum == 0:
                     if count % 2:
@@ -359,13 +366,13 @@ class Player:
                             ret_d[k] = -self.BOUNDARY
                         else:
                             ret_d[k] = self.BOUNDARY
-                        if self.turn_num > 2:
-                            if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
-                                ret_d[k] = -self.BOUNDARY
-                            elif 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
-                                ret_d[k] = self.BOUNDARY
-                            else:
-                                ret_d[k] = np.random.uniform(-1000.0, 1000.0)
+                        # if self.turn_num > 2:
+                        #     if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
+                        #         ret_d[k] = -self.BOUNDARY
+                        #     elif 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
+                        #         ret_d[k] = self.BOUNDARY
+                        #     else:
+                        #         ret_d[k] = np.random.uniform(-1000.0, 1000.0)
 
                 count += 1
 
