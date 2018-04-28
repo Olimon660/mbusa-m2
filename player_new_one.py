@@ -202,6 +202,7 @@ class Player:
 
     def linear2(self):
         ret_d = dict()
+        ret_d[self.v_col] = 1023.0
         self.counter_enemy_mix(ret_d)
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
@@ -209,6 +210,7 @@ class Player:
 
     def quad2(self):
         ret_d = dict()
+        ret_d[self.v_col] = 1023.0
         self.counter_enemy_mix(ret_d)
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
@@ -334,13 +336,6 @@ class Player:
                     if k not in ret_d:
                         ret_d[k] = next_min
                         next_min = self.get_next_unique_min()
-            else:
-                for k in self.data:
-                    if k not in ret_d:
-                        if self.played_data[k][-1] > 0:
-                            ret_d[k] = self.get_next_unique_max()
-                        else:
-                            ret_d[k] = self.get_next_unique_min()
 
         for k in self.data.keys():
             if k not in ret_d:
@@ -366,13 +361,6 @@ class Player:
                             ret_d[k] = -self.BOUNDARY
                         else:
                             ret_d[k] = self.BOUNDARY
-                        # if self.turn_num > 2:
-                        #     if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
-                        #         ret_d[k] = -self.BOUNDARY
-                        #     elif 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
-                        #         ret_d[k] = self.BOUNDARY
-                        #     else:
-                        #         ret_d[k] = np.random.uniform(-1000.0, 1000.0)
 
                 count += 1
 
@@ -421,7 +409,7 @@ class Player:
         put into the game matrix.
         """
         m = self.BOUNDARY
-        while m >= -self.BOUNDARY:
+        while m > -self.BOUNDARY:
             for col in self.data:
                 if m in self.data[col]:
                     m = self.next_after(m, -1)
@@ -436,7 +424,7 @@ class Player:
         put into the game matrix.
         """
         m = -self.BOUNDARY
-        while m <= self.BOUNDARY:
+        while m < self.BOUNDARY:
             for col in self.data:
                 if m in self.data[col]:
                     m = self.next_after(m, 1)
