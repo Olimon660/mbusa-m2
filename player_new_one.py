@@ -6,6 +6,9 @@ from scipy import stats
 
 class Player:
     """
+    This is the Sleep No More series.
+    This is the main version.
+
     The player class of syndicate 12 - The Last Jedi
     Group members include: Ernest, Iris, Junyi, Simon, Yan
     This players tries to achieve the victory condition as well as defeat others.
@@ -110,6 +113,8 @@ class Player:
             count = 0
             for k in self.played_data:
                 if k != self.v_col and self.played_data[k][-1] > 0:
+                    if 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
+                        continue
                     ret_d[k] = next_max
                     count += 1
                 if count > 1:
@@ -127,7 +132,7 @@ class Player:
         :return:
         """
         ret_d = dict()
-        ret_d[self.v_col] = round(1023.0 - (self.turn_num-1) * self.EPSILON, 5)
+        ret_d[self.v_col] = round(-1023.0 + (self.turn_num-1) * self.EPSILON, 5)
 
         if self.turn_num == 10:
             ret_d[self.v_col] = self.next_after(self.get_next_unique_min(), 1)
@@ -136,7 +141,9 @@ class Player:
             next_min = self.get_next_unique_min()
             count = 0
             for k in self.played_data:
-                if k != self.v_col and self.played_data[k][-1] > 0:
+                if k != self.v_col and self.played_data[k][-1] < 0:
+                    if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
+                        continue
                     ret_d[k] = next_min
                     count += 1
                 if count > 1:
@@ -252,8 +259,6 @@ class Player:
         """
         :return:
         """
-        if self.turn_num <= 3:
-            return
 
         if self.turn_num == 9:
             sorted_max = sorted(self.unique_max_col_count.items(), key=lambda x: x[1], reverse=True)
@@ -354,6 +359,13 @@ class Player:
                             ret_d[k] = -self.BOUNDARY
                         else:
                             ret_d[k] = self.BOUNDARY
+                        if self.turn_num > 2:
+                            if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
+                                ret_d[k] = -self.BOUNDARY
+                            elif 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
+                                ret_d[k] = self.BOUNDARY
+                            else:
+                                ret_d[k] = np.random.uniform(-1000.0, 1000.0)
 
                 count += 1
 
