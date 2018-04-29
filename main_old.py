@@ -1,5 +1,5 @@
-from player_new import Player as Player
-from player_new_one import Player as Player_Min
+from player_new_one import Player as Player
+from player_minimal import Player as Player_Min
 from scipy.stats.stats import pearsonr
 import numpy as np
 import random

@@ -99,16 +99,21 @@ class Player:
 
     def max_strategy(self):
         """
-        Need to take both max and min in the column
-        :return:
+        This function returns a dictionary with same keys as data, and with
+        single float values to be filled in the game matrix when the winning
+        condition is Max.
         """
         ret_d = dict()
-        ret_d[self.v_col] = round(1023.0 - (self.turn_num-1) * self.EPSILON, 5)
+
+        # for winning column, fill in the upper boundary deducting a small number in round 1-9
+        ret_d[self.v_col] = round(self.BOUNDARY - (self.turn_num-1) * self.EPSILON, 5)
 
         if self.turn_num == 10:
+            # in round 10, assign the float that is 2 unit smaller than the
+            # current unique max to the winning column
             ret_d[self.v_col] = self.next_after(self.get_next_unique_max(), -1)
 
-            # assign the next max to two other columns
+            # assign the next unique max to two other columns if the suspected winning strategy is not SumNeg
             next_max = self.get_next_unique_max()
             count = 0
             for k in self.played_data:
@@ -118,16 +123,22 @@ class Player:
                 if count >= 2:
                     break
 
+        # fill in values for other columns
         self.counter_enemy_mix(ret_d)
 
+        # record the values this player played in this round
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
+
         return ret_d
 
     def min_strategy(self):
         """
         Need to take both max and min in the column
         :return:
+        This function returns a dictionary with same keys as data, and with
+        single float values to be filled in the game matrix when the winning
+        condition is Min.
         """
         ret_d = dict()
         ret_d[self.v_col] = round(-1023.0 + (self.turn_num-1) * self.EPSILON, 5)
@@ -152,8 +163,16 @@ class Player:
         return ret_d
 
     def zero_m_strategy(self):
+        """
+        This function returns a dictionary with same keys as data, and with
+        single float values to be filled in the game matrix when the winning
+        condition is ZeroM.
+        """
+        # choose two other disguise col if not set
         ret_d = dict()
         current_sum = sum(self.data[self.v_col])
+
+        # winning col: make current average as good as possible in round 1-9
         if current_sum <= abs(0.000001 * len(self.data[self.v_col])):
             ret_d[self.v_col] = 0.0000001
         elif current_sum < 0:
@@ -196,6 +215,14 @@ class Player:
         return ret_d
 
     def linear2(self):
+        """
+        This function returns a dictionary with same keys as data, and with
+        single float values to be filled in the game matrix when the winning
+        condition is Linear.
+
+        Since it's very hard to win under this condition, we decided to use
+        all columns to block others in each round.
+        """
         ret_d = dict()
         ret_d[self.v_col] = 1023.0
         self.counter_enemy_mix(ret_d)
@@ -204,6 +231,14 @@ class Player:
         return ret_d
 
     def quad2(self):
+        """
+        This function returns a dictionary with same keys as data, and with
+        single float values to be filled in the game matrix when the winning
+        condition is Quadratic.
+
+        Since it's very hard to win under this condition, we decided to use
+        all columns to block others in each round.
+        """
         ret_d = dict()
         ret_d[self.v_col] = 1023.0
         self.counter_enemy_mix(ret_d)
@@ -228,6 +263,11 @@ class Player:
         return ret_d
 
     def sum_pos_strategy(self):
+        """
+        This function returns a dictionary with same keys as data, and with
+        single float values to be filled in the game matrix when the winning
+        condition is SumPos.
+        """
         ret_d = dict()
         if sum(self.data[self.v_col]) > 0:
             ret_d[self.v_col] = self.BOUNDARY
@@ -241,6 +281,11 @@ class Player:
         return ret_d
 
     def sum_neg_strategy(self):
+        """
+        This function returns a dictionary with same keys as data, and with
+        single float values to be filled in the game matrix when the winning
+        condition is SumNeg.
+        """
         ret_d = dict()
         if sum(self.data[self.v_col]) < 0:
             ret_d[self.v_col] = -self.BOUNDARY
@@ -255,12 +300,17 @@ class Player:
 
     def check_enemy_col(self):
         """
-        :return:
-        """
+        This function uses current data to predict opponent's winning
+        strategies in other columns. Different winning conditions are checked
+        at different rounds.
 
+        Returns a dictionary with winning conditions as keys and
+        corresponding column names as values.
+        """
         if self.turn_num == 9:
             sorted_max = sorted(self.unique_max_col_count.items(), key=lambda x: x[1], reverse=True)
             sorted_min = sorted(self.unique_min_col_count.items(), key=lambda x: x[1], reverse=True)
+
             if sorted_max and sorted_max[0][1] >= 2:
                 self.enemy_col_cond['Max'] = sorted_max[0][0]
             if sorted_min and sorted_min[0][1] >= 2:
@@ -305,6 +355,14 @@ class Player:
                         self.enemy_col_cond['SumNeg'] = col
 
     def counter_enemy_mix(self, ret_d):
+        """
+        This function returns a dictionary with same keys as data, and with
+        single float values to be filled in the game matrix when the winning
+        condition is Max.
+
+        It fills values for the non-winning columns to defeat opponents'
+        winning strategies.
+        """
         current_max = self.get_current_unique_max()
         current_min = self.get_current_unique_min()
 
@@ -314,6 +372,7 @@ class Player:
                     ret_d[self.enemy_col_cond['Max']] = current_max
                 else:
                     ret_d[self.enemy_col_cond['Max']] = self.next_after(self.get_next_unique_max(), -1)
+
                 next_max = self.get_next_unique_max()
                 if self.v_col == 'Max':
                     count = 0
