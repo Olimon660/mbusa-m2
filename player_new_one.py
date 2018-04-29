@@ -92,7 +92,7 @@ class Player:
         This function returns True if the player's value is entered before or 
         the opponent in the matrix, False otherwise.
         """
-        for col in self.data.keys():
+        for col in self.data:
             if self.data[col][1::2] != self.played_data[col]:
                 return False
         return True
@@ -113,11 +113,9 @@ class Player:
             count = 0
             for k in self.played_data:
                 if k != self.v_col and self.played_data[k][-1] > 0:
-                    if 'SumNeg' in self.enemy_col_cond and self.enemy_col_cond['SumNeg'] == k:
-                        continue
                     ret_d[k] = next_max
                     count += 1
-                if count > 1:
+                if count >= 2:
                     break
 
         self.counter_enemy_mix(ret_d)
@@ -142,11 +140,9 @@ class Player:
             count = 0
             for k in self.played_data:
                 if k != self.v_col and self.played_data[k][-1] < 0:
-                    if 'SumPos' in self.enemy_col_cond and self.enemy_col_cond['SumPos'] == k:
-                        continue
                     ret_d[k] = next_min
                     count += 1
-                if count > 1:
+                if count >= 2:
                     break
 
         self.counter_enemy_mix(ret_d)
@@ -156,13 +152,12 @@ class Player:
         return ret_d
 
     def zero_m_strategy(self):
-        # choose two other disguise col if not set
         ret_d = dict()
         current_sum = sum(self.data[self.v_col])
         if current_sum <= abs(0.000001 * len(self.data[self.v_col])):
             ret_d[self.v_col] = 0.0000001
         elif current_sum < 0:
-            ret_d[self.v_col] = min(max(current_sum + self.EPSILON, -self.BOUNDARY), self.BOUNDARY)  # or random(0,1023)?
+            ret_d[self.v_col] = min(max(current_sum + self.EPSILON, -self.BOUNDARY), self.BOUNDARY)
         else:
             ret_d[self.v_col] = min(max(-current_sum - self.EPSILON, -self.BOUNDARY), self.BOUNDARY)
         if self.turn_num == 10:
@@ -310,8 +305,6 @@ class Player:
                         self.enemy_col_cond['SumNeg'] = col
 
     def counter_enemy_mix(self, ret_d):
-        count = 0
-
         current_max = self.get_current_unique_max()
         current_min = self.get_current_unique_min()
 
@@ -322,22 +315,45 @@ class Player:
                 else:
                     ret_d[self.enemy_col_cond['Max']] = self.next_after(self.get_next_unique_max(), -1)
                 next_max = self.get_next_unique_max()
-                for k in self.data:
-                    if k not in ret_d:
-                        ret_d[k] = next_max
-                        next_max = self.get_next_unique_max()
+                if self.v_col == 'Max':
+                    count = 0
+                    for k in self.data:
+                        if k not in ret_d:
+                            #  if we are Max as well, only put one next Max, so we don't defeat ourselves
+                            ret_d[k] = next_max
+                            next_max = self.next_after(next_max, -1)
+                            count += 1
+                        if count >= 1:
+                            break
+                else:
+                    for k in self.data:
+                        if k not in ret_d:
+                            ret_d[k] = next_max
+                            next_max = self.next_after(next_max, -1)
+
             elif 'Min' in self.enemy_col_cond:
                 if current_min < 0:
                     ret_d[self.enemy_col_cond['Min']] = current_min
                 else:
                     ret_d[self.enemy_col_cond['Min']] = self.next_after(self.get_next_unique_min(), 1)
                 next_min = self.get_next_unique_min()
-                for k in self.data:
-                    if k not in ret_d:
-                        ret_d[k] = next_min
-                        next_min = self.get_next_unique_min()
-
-        for k in self.data.keys():
+                if self.v_col == 'Min':
+                    count = 0
+                    for k in self.data:
+                        if k not in ret_d:
+                            #  if we are Min as well, only put one next Min, so we don't defeat ourselves
+                            ret_d[k] = next_min
+                            next_min = self.next_after(next_min, 1)
+                            count += 1
+                        if count >= 1:
+                            break
+                else:
+                    for k in self.data:
+                        if k not in ret_d:
+                            ret_d[k] = next_min
+                            next_min = self.next_after(next_min, 1)
+        count = 0
+        for k in self.data:
             if k not in ret_d:
                 current_sum = sum(self.data[k])
 
@@ -374,7 +390,7 @@ class Player:
         This function returns the unique maximum value in the current game matrix.
         """
         nums_count = dd(int)
-        for col in self.data.keys():
+        for col in self.data:
             for number in self.data[col]:
                 nums_count[number] += 1
 
@@ -391,7 +407,7 @@ class Player:
         This function returns the unique minimum value in the current game matrix.
         """
         nums_count = dd(int)
-        for col in self.data.keys():
+        for col in self.data:
             for number in self.data[col]:
                 nums_count[number] += 1
 
