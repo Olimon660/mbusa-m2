@@ -110,7 +110,7 @@ class Player:
         """
         ret_d = dict()
 
-        # for the vicotry column, fill in the upper boundary deducting a small number in round 1-9
+        # for the victory column, fill in the upper boundary deducting a small number in round 1-9
         ret_d[self.v_col] = round(self.BOUNDARY - (self.turn_num-1) * self.EPSILON, 5)
 
         if self.turn_num == 10:
@@ -145,7 +145,7 @@ class Player:
         :return: a dictionary with same keys as data, with single float values to be filled in the game matrix
         """
         ret_d = dict()
-        # for the vicotry column, fill in the lower boundary adding a small number in round 1-9
+        # for the victory column, fill in the lower boundary adding a small number in round 1-9
         ret_d[self.v_col] = round(-1023.0 + (self.turn_num-1) * self.EPSILON, 5)
 
         if self.turn_num == 10:
