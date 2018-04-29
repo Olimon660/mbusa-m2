@@ -14,7 +14,7 @@ class Player:
     This players tries to achieve the victory condition as well as defeat others.
     Enemy counter strategies are grouped so that we have more generalized strategies which work for more than one case.
 
-    This class file is fully complied with PEP8.
+    This class file fully complies with PEP8.
     Some duplicate codes are retained for better readability.
     Some repetitive inline comments are omitted in the later strategy functions.
 
