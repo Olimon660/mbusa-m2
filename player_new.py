@@ -197,15 +197,18 @@ class Player:
     def zero_m_strategy(self):
         # choose two other disguise col if not set
         ret_d = dict()
-        current_sum = np.sum(self.data[self.v_col])
+        current_sum = sum(self.data[self.v_col])
+
+        # winning col: make current average as good as possible in round 1-9
         if current_sum <= abs(0.000001 * len(self.data[self.v_col])):
             ret_d[self.v_col] = 0.0000001
         elif current_sum < 0:
-            ret_d[self.v_col] = current_sum + self.EPSILON  # or random(0,1023)?
+            ret_d[self.v_col] = min(max(current_sum + self.EPSILON, -self.BOUNDARY), self.BOUNDARY)
         else:
-            ret_d[self.v_col] = -current_sum - self.EPSILON
+            ret_d[self.v_col] = min(max(-current_sum - self.EPSILON, -self.BOUNDARY), self.BOUNDARY)
         if self.turn_num == 10:
-            # take a guess
+
+            # Extract opponent's data and predict they'll put the mode value this round
             if self.is_first_to_move:
                 e_col = self.data[self.v_col][2::2]
             else:
