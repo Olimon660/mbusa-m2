@@ -374,7 +374,7 @@ class Player:
         SumNeg:     If current_sum is 0, we keep putting the positive boundary value to attempt to defeat.
 
         :param ret_d: the dictionary with 1 value filled in for the victory column already
-        :return: It only updates the ret_d with unfilled columns and has no return data
+        :return: the dictionary with 5 numbers ready to be used by the server
         """
         current_max = self.get_current_unique_max()
         current_min = self.get_current_unique_min()
