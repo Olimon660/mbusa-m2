@@ -389,21 +389,10 @@ class Player:
                     ret_d[self.enemy_col_cond['Max']] = self.next_after(self.get_next_unique_max(), -1)
 
                 next_max = self.get_next_unique_max()
-                if self.v_col == 'Max':
-                    count = 0
-                    for k in self.data:
-                        if k not in ret_d:
-                            #  if we are Max as well, only put one next Max, so we don't defeat ourselves
-                            ret_d[k] = next_max
-                            next_max = self.next_after(next_max, -1)
-                            count += 1
-                        if count >= 1:  # only put in 1 next unique value
-                            break
-                else:
-                    for k in self.data:
-                        if k not in ret_d:
-                            ret_d[k] = next_max
-                            next_max = self.next_after(next_max, -1)
+                for k in self.data:
+                    if k not in ret_d:
+                        ret_d[k] = next_max
+                        next_max = self.get_next_unique_max()
             elif 'Min' in self.enemy_col_cond:
                 # the following part is the negation of the Max clause
                 # meant to keep separate for better readability
@@ -412,25 +401,14 @@ class Player:
                 else:
                     ret_d[self.enemy_col_cond['Min']] = self.next_after(self.get_next_unique_min(), 1)
                 next_min = self.get_next_unique_min()
-                if self.v_col == 'Min':
-                    count = 0
-                    for k in self.data:
-                        if k not in ret_d:
-                            #  if we are Min as well, only put one next Min, so we don't defeat ourselves
-                            ret_d[k] = next_min
-                            next_min = self.next_after(next_min, 1)
-                            count += 1
-                        if count >= 1:
-                            break
-                else:
-                    for k in self.data:
-                        if k not in ret_d:
-                            ret_d[k] = next_min
-                            next_min = self.next_after(next_min, 1)
+                for k in self.data:
+                    if k not in ret_d:
+                        ret_d[k] = next_min
+                        next_min = self.get_next_unique_min()
 
         count = 0
-        for k in self.data:
-            if k not in ret_d:  # only insert values if it is not already added from strategy functions
+        for k in self.data.keys():
+            if k not in ret_d:
                 current_sum = sum(self.data[k])
 
                 if self.turn_num == 1 or current_sum == 0:
