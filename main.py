@@ -8,14 +8,14 @@ NUM_OF_TURNS = 10
 # VICTORIES_CONDITIONS = ['Max', 'Min']
 # VICTORIES_CONDITIONS = ['ZeroM']
 VICTORIES_CONDITIONS1 = ['Min']
-VICTORIES_CONDITIONS2 = ['Linear']
+VICTORIES_CONDITIONS2 = ['Min']
 # VICTORIES_CONDITIONS2 = ['SumNeg', 'SumPos']
 # VICTORIES_CONDITIONS1 = ['Linear']
 # VICTORIES_CONDITIONS2 = ['Min']
 result_table = {}
 
-p1_name = 'player_new_one.py'
-p2_name = 'player_new_one.py'
+p1_name = 'assign_stupid2_bkp.py'
+p2_name = 'player_new_two.py'
 
 
 def send_to_server(js):
@@ -32,7 +32,7 @@ def send_to_server(js):
     # print(data)
     parsed = json.loads(data[8:])
     result_table[(parsed[1][1], parsed[2][1])] = parsed[-2]
-    # print(json.dumps(parsed, indent=4, sort_keys=True))
+    print(json.dumps(parsed, indent=4, sort_keys=True))
 
     clientsocket.close()
 

@@ -1,4 +1,4 @@
-from player_new_one import Player as Player
+from assign_stupid2_bkp import Player as Player
 from player_minimal import Player as Player_Min
 from scipy.stats.stats import pearsonr
 import numpy as np
