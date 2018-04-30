@@ -7,11 +7,10 @@ from scipy import stats
 class Player:
     """
     This is the Sleep No More series.
-    This is the main stream version.
 
     The player class of syndicate 12 - Sleep No More
     Group members include: Ernest, Iris, Junyi, Simon, Yan
-    This players tries to achieve the victory condition as well as defeat others.
+    This player tries to achieve the victory condition as well as defeat others.
     Enemy counter strategies are grouped so that we have more generalized strategies which work for more than one case.
 
     This class file fully complies with PEP8.
@@ -375,6 +374,7 @@ class Player:
         SumPos:     If current_sum is 0, we keep putting the negative boundary value to attempt to defeat.
         SumNeg:     If current_sum is 0, we keep putting the positive boundary value to attempt to defeat.
 
+        :param ret_d: the dictionary with 1 value filled in for the victory column already
         :return: It only updates the ret_d with unfilled columns and has no return data
         """
         current_max = self.get_current_unique_max()
