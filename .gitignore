@@ -3,6 +3,5 @@
 \venv_py
 main.py
 add_delete_player.py
-player_n10m.py
 \__pycache__
 main_old.py

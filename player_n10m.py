@@ -111,28 +111,13 @@ class Player:
         # for the victory column, fill in the upper boundary deducting a small number in round 1-9
         ret_d[self.v_col] = round(self.BOUNDARY - (self.turn_num-1) * self.EPSILON, 5)
 
-        if self.turn_num == 10:
-            # in round 10, assign the float that is 2 unit smaller than the
-            # current unique max to the winning column
-            ret_d[self.v_col] = self.next_after(self.get_next_unique_max(), -1)
+        if self.turn_num == 10 and 'Max' in self.enemy_col_cond:
+            ret_d[self.v_col] = self.next_after(self.get_current_unique_max(), -1)
 
-            # assign the next unique max to two other columns
-            next_max = self.get_next_unique_max()
-            count = 0
-            for k in self.played_data:
-                if k != self.v_col and self.played_data[k][-1] > 0:
-                    ret_d[k] = next_max
-                    count += 1
-                if count >= 2:
-                    break
-
-        # fill in values for other columns to defeat the opponent
         self.counter_enemy_mix(ret_d)
 
-        # record the values this player played in this round
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
-
         return ret_d
 
     def min_strategy(self):
@@ -143,28 +128,13 @@ class Player:
         :return: a dictionary with same keys as data, with single float values to be filled in the game matrix
         """
         ret_d = dict()
-        # for the victory column, fill in the lower boundary adding a small number in round 1-9
-        ret_d[self.v_col] = round(-1023.0 + (self.turn_num-1) * self.EPSILON, 5)
 
-        if self.turn_num == 10:
-            # in round 10, assign the float that is 2 unit larger than the
-            # current unique min to the winning column
-            ret_d[self.v_col] = self.next_after(self.get_next_unique_min(), 1)
-
-            # assign the next min to two other columns
-            next_min = self.get_next_unique_min()
-            count = 0
-            for k in self.played_data:
-                if k != self.v_col and self.played_data[k][-1] < 0:
-                    ret_d[k] = next_min
-                    count += 1
-                if count >= 2:
-                    break
-
-        # fill in values for other columns to defeat the opponent
+        ret_d[self.v_col] = round(-1023.0 + (self.turn_num - 1) * self.EPSILON, 5)
         self.counter_enemy_mix(ret_d)
 
-        # record the values this player played in this round
+        if self.turn_num == 10 and 'Min' in self.enemy_col_cond:
+            ret_d[self.v_col] = self.next_after(self.get_current_unique_max(), -1)
+
         for k in ret_d:
             self.played_data[k].append(ret_d[k])
         return ret_d
@@ -379,54 +349,28 @@ class Player:
         current_max = self.get_current_unique_max()
         current_min = self.get_current_unique_min()
 
-        #  special defeat logic in the last turn
         if self.turn_num == 10:
             if 'Max' in self.enemy_col_cond:
                 if current_max > 0:
                     ret_d[self.enemy_col_cond['Max']] = current_max
                 else:
-                    # if current_max < 0 it means there is no unique max at the moment
                     ret_d[self.enemy_col_cond['Max']] = self.next_after(self.get_next_unique_max(), -1)
-
                 next_max = self.get_next_unique_max()
-                if self.v_col == 'Max':
-                    count = 0
-                    for k in self.data:
-                        if k not in ret_d:
-                            #  if we are Max as well, only put one next Max, so we don't defeat ourselves
-                            ret_d[k] = next_max
-                            next_max = self.next_after(next_max, -1)
-                            count += 1
-                        if count >= 1:  # only put in 1 next unique value
-                            break
-                else:
-                    for k in self.data:
-                        if k not in ret_d:
-                            ret_d[k] = next_max
-                            next_max = self.next_after(next_max, -1)
-            elif 'Min' in self.enemy_col_cond:
-                # the following part is the negation of the Max clause
-                # meant to keep separate for better readability
+                for k in self.data:
+                    if k not in ret_d:
+                        ret_d[k] = next_max
+                        next_max = self.get_next_unique_max()
+
+            if 'Min' in self.enemy_col_cond:
                 if current_min < 0:
                     ret_d[self.enemy_col_cond['Min']] = current_min
                 else:
                     ret_d[self.enemy_col_cond['Min']] = self.next_after(self.get_next_unique_min(), 1)
                 next_min = self.get_next_unique_min()
-                if self.v_col == 'Min':
-                    count = 0
-                    for k in self.data:
-                        if k not in ret_d:
-                            #  if we are Min as well, only put one next Min, so we don't defeat ourselves
-                            ret_d[k] = next_min
-                            next_min = self.next_after(next_min, 1)
-                            count += 1
-                        if count >= 1:
-                            break
-                else:
-                    for k in self.data:
-                        if k not in ret_d:
-                            ret_d[k] = next_min
-                            next_min = self.next_after(next_min, 1)
+                for k in self.data:
+                    if k not in ret_d:
+                        ret_d[k] = next_min
+                        next_min = self.get_next_unique_min()
 
         count = 0
         for k in sorted(self.data.keys()):
